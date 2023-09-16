@@ -1,0 +1,170 @@
+swagger: "2.0"
+info:
+  description: This is the notification service used in the Discover Quest application.
+  version: "1.0.0"
+  title: Notification Service
+  contact:
+    email: nguyenminhmannh2001@gmail.com
+
+schemes:
+  - http
+  - https
+
+basePath: /v1
+
+paths:
+  /test:
+    get:
+      summary: Test
+      description: Test
+      operationId: test
+      security:
+        - JWT: []
+      responses:
+        200:
+          description: Successfully
+        401:
+          description: Unauthorized
+      x-swagger-router-controller: app.controllers.email_notification_controller
+
+  /send-confirm-email:
+    post:
+      tags:
+        - Email Notification
+      summary: Send Confirmation Email
+      description: Sends a confirmation email to the specified user.
+      operationId: send_confirm_email
+      security:
+        - JWT: []
+      parameters:
+        - in: body
+          name: email_data
+          description: User registration information
+          required: true
+          schema:
+            $ref: "#/definitions/SendConfirmEmailRequest"
+      responses:
+        200:
+          description: Successfully sent confirmation email.
+        401:
+          description: Unauthorized
+        500:
+          description: Internal server error
+      x-swagger-router-controller: app.controllers.email_notification_controller
+  /send-password-reset-email:
+    post:
+      tags:
+        - Email Notification
+      summary: Send Password Reset Email
+      description: Sends a password reset email to the specified user.
+      operationId: send_password_reset_email
+      security:
+        - JWT: []
+      parameters:
+        - in: body
+          name: email_data
+          description: User email for password reset
+          required: true
+          schema:
+            $ref: "#/definitions/SendPasswordResetEmailRequest"
+      responses:
+        200:
+          description: Successfully sent password reset email.
+        401:
+          description: Unauthorized
+        500:
+          description: Internal server error
+      x-swagger-router-controller: app.controllers.email_notification_controller
+  /send-verification-email:
+    post:
+      tags:
+        - Email Notification
+      summary: Send Verification Email
+      description: Sends a verification email to the specified user.
+      operationId: send_verification_email
+      security:
+        - JWT: []
+      parameters:
+        - in: body
+          name: email_data
+          description: User email for verification
+          required: true
+          schema:
+            $ref: "#/definitions/SendVerificationEmailRequest"
+      responses:
+        200:
+          description: Successfully sent verification email.
+        401:
+          description: Unauthorized
+        500:
+          description: Internal server error
+      x-swagger-router-controller: app.controllers.email_notification_controller
+
+definitions:
+  SendConfirmEmailRequest:
+    type: object
+    required:
+      - email
+      - username
+      - verification_link
+    properties:
+      email:
+        type: string
+        format: email
+        description: The email address of the user.
+        example: john.doe@example.com
+      username:
+        type: string
+        description: The username of the user.
+        example: johndoe
+      verification_link:
+        type: string
+        description: The email verification link for the user.
+        example: https://example.com/reset-password?token=eyJhbGc.bCI6ImpvaG4uZG9lQGV4YW1wbGUuY.1HjrOyjvURs9xe
+  SendPasswordResetEmailRequest:
+    type: object
+    required:
+      - email
+      - username
+      - reset_link
+    properties:
+      username:
+        type: string
+        description: The username of the user.
+        example: johndoe
+      email:
+        type: string
+        format: email
+        description: The email address of the user.
+        example: john.doe@example.com
+      reset_link:
+        type: string
+        description: The password reset link for the user.
+        example: https://example.com/reset-password?token=eyJhbGc.bCI6ImpvaG4uZG9lQGV4YW1wbGUuY.1HjrOyjvURs9xe
+  SendVerificationEmailRequest:
+    type: object
+    required:
+      - email
+      - username
+      - verification_link
+    properties:
+      username:
+        type: string
+        description: The username of the user.
+        example: johndoe
+      email:
+        type: string
+        format: email
+        description: The email address of the user.
+        example: john.doe@example.com
+      verification_link:
+        type: string
+        description: The email verification link for the user.
+        example: https://example.com/reset-password?token=eyJhbGc.bCI6ImpvaG4uZG9lQGV4YW1wbGUuY.1HjrOyjvURs9xe
+
+securityDefinitions:
+  JWT:
+    type: apiKey
+    name: Authorization
+    in: header
+    x-apikeyInfoFunc: helpers.utils.decode_token
